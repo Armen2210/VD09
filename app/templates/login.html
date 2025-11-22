@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{# Наследуем общий каркас (шапка, навбар, контейнер) из base.html.
+   Важно: имя файла лучше использовать в нижнем регистре — login.html,
+   чтобы было удобно и единообразно. В routes.py маршрут называется 'login'. #}
+
+{% block content %}
+{# Всё, что внутри этого блока, будет вставлено в {% block content %} из base.html #}
+
+<div class="row justify-content-center">
+    <!--
+        .row — строка сетки Bootstrap.
+        .justify-content-center — выравнивание вложенных колонок по центру.
+    -->
+
+    <div class="col-md-6 col-lg-4">
+        <!--
+            Колонка:
+            - на экранах md (≥768px) занимает 6 колонок из 12
+            - на экранах lg (≥992px) — 4 из 12
+            Так форма будет выглядеть компактно и по центру.
+        -->
+
+        <div class="card shadow-sm">
+            <!--
+                .card — карточка Bootstrap (удобный контейнер для содержания).
+                .shadow-sm — лёгкая тень, чтобы карточка "поднималась" над фоном.
+            -->
+
+            <div class="card-header bg-secondary text-white">
+                <!--
+                    .card-header — заголовок карточки.
+                    .bg-secondary — серый фон (вторичный цвет Bootstrap).
+                    .text-white — белый текст.
+                -->
+                <h4 class="mb-0">Вход в аккаунт</h4>
+                <!-- Заголовок формы, без нижнего отступа (.mb-0) -->
+            </div>
+
+            <div class="card-body">
+                <!-- Основное содержимое карточки — здесь расположена форма входа -->
+
+                <!--
+                    Форма отправляется методом POST
+                    и обрабатывается маршрутом 'login' из файла routes.py:
+                    @app.route('/login', methods=['GET', 'POST'])
+                    def login(): ...
+                -->
+                <form method="POST" action="{{ url_for('login') }}">
+                    {{ form.hidden_tag() }}
+                    {# hidden_tag() добавляет скрытые поля, включая CSRF-токен (защита от подделки запросов). #}
+
+                    <div class="mb-3">
+                        <!-- Блок для поля имени пользователя с отступом снизу -->
+
+                        {{ form.username.label(class="form-label") }}
+                        {# Подпись к полю username, стилизованная как label Bootstrap #}
+
+                        {{ form.username(class="form-control") }}
+                        {# Само поле ввода текста, оформленное как Bootstrap input (.form-control). #}
+
+                        {% for error in form.username.errors %}
+                            <!-- Если при валидации формы возникли ошибки по полю username,
+                                 они будут выведены здесь (например, "Обязательное поле"). -->
+                            <div class="text-danger small">{{ error }}</div>
+                            <!-- text-danger — красный цвет, small — маленький размер шрифта. -->
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <!-- Блок для поля пароля -->
+
+                        {{ form.password.label(class="form-label") }}
+                        {# Подпись поля пароля #}
+
+                        {{ form.password(class="form-control") }}
+                        {# Поле для ввода пароля (type="password"), с Bootstrap-классом .form-control #}
+
+                        {% for error in form.password.errors %}
+                            <!-- Ошибки, связанные с паролем (например, пустое поле), появятся здесь -->
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid">
+                        <!--
+                            .d-grid — превращает контейнер в CSS Grid.
+                            В таком контейнере кнопка по умолчанию растягивается на всю ширину.
+                        -->
+                        {{ form.submit(class="btn btn-primary") }}
+                        <!--
+                            Кнопка отправки формы.
+                            .btn — базовый класс кнопки.
+                            .btn-primary — основной синий стиль Bootstrap-кнопки.
+                        -->
+                    </div>
+                </form>
+
+                <hr>
+                <!-- Горизонтальная линия, визуально отделяет форму от дополнительного текста -->
+
+                <p class="mb-0 text-center small">
+                    <!--
+                        Текст под формой.
+                        .small — уменьшенный размер шрифта.
+                        .text-center — центрирование текста.
+                        .mb-0 — без нижнего отступа.
+                    -->
+                    Нет аккаунта?
+                    <!-- Вопрос-подсказка для пользователя без регистрации -->
+
+                    <a href="{{ url_for('register') }}">Зарегистрироваться</a>
+                    <!-- Ссылка на маршрут 'register', описанный в routes.py.
+                         При нажатии — переход на страницу с формой регистрации. -->
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{# Конец блока контента #}
